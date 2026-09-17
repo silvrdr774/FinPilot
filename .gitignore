@@ -1,0 +1,4 @@
+finpilot.db
+*.db
+__pycache__/
+.DS_Store

@@ -980,7 +980,156 @@ function t(key){ return (I18N[currentLang] && I18N[currentLang][key]) || I18N.en
 
 function setLang(l){ currentLang=l; applyI18n(); renderDurationPills(); }
 
-function applyI18n(){ document.querySelectorAll('[data-i18n]').forEach(el=>{ el.textContent = t(el.getAttribute('data-i18n')); }); }
+
+const STATIC_I18N = {
+  en: {
+    "Dashboard":"Dashboard",
+    "Learn Finance":"Learn Finance",
+    "Financial Tools":"Financial Tools",
+    "AI Assistant":"AI Assistant",
+    "Financial Advisors":"Financial Advisors",
+    "Investment Plan":"Investment Plan",
+    "Log out":"Log out",
+    "FINANCIAL DECISION SIMULATOR":"FINANCIAL DECISION SIMULATOR",
+    "COMPANY OVERVIEW":"COMPANY OVERVIEW",
+    "Your business cockpit.":"Your business cockpit.",
+    "CEO overview · Apple · combined department view":"CEO overview · Apple · combined department view",
+    "CASH POSITION":"CASH POSITION",
+    "Current reported cash balance.":"Current reported cash balance.",
+    "RISK":"RISK",
+    "Short-term liquidity indicator.":"Short-term liquidity indicator.",
+    "ACTIVE TEAM":"ACTIVE TEAM",
+    "CEO, Data and Finance.":"CEO, Data and Finance.",
+    "SERVICES":"SERVICES",
+    "Decision simulation":"Decision simulation",
+    "Test business choices before committing cash.":"Test business choices before committing cash.",
+    "Multi-agent reporting":"Multi-agent reporting",
+    "Combine data and finance submissions for the CEO.":"Combine data and finance submissions for the CEO.",
+    "Financial planning":"Financial planning",
+    "Explore reserves, SIP projections and business targets.":"Explore reserves, SIP projections and business targets.",
+    "Human support":"Human support",
+    "Browse fictional financial coaches for demo discovery.":"Browse fictional financial coaches for demo discovery.",
+    "LIVE CASH MOTION":"LIVE CASH MOTION",
+    "Illustrative motion graph for the demo. Actual simulation results are calculated in the Simulation section.":"Illustrative motion graph for the demo. Actual simulation results are calculated in the Simulation section.",
+    "FINANCIAL TOOLS":"FINANCIAL TOOLS",
+    "AI ASSISTANT":"AI ASSISTANT",
+    "Ask your finance copilot.":"Ask your finance copilot."
+  },
+  hi: {
+    "Dashboard":"डैशबोर्ड",
+    "Learn Finance":"वित्त सीखें",
+    "Financial Tools":"वित्तीय उपकरण",
+    "AI Assistant":"एआई सहायक",
+    "Financial Advisors":"वित्तीय सलाहकार",
+    "Investment Plan":"निवेश योजना",
+    "Log out":"लॉग आउट",
+    "FINANCIAL DECISION SIMULATOR":"वित्तीय निर्णय सिम्युलेटर",
+    "COMPANY OVERVIEW":"कंपनी का अवलोकन",
+    "Your business cockpit.":"आपका बिज़नेस कॉकपिट।",
+    "CASH POSITION":"नकदी स्थिति",
+    "Current reported cash balance.":"वर्तमान रिपोर्ट की गई नकदी शेष।",
+    "RISK":"जोखिम",
+    "Short-term liquidity indicator.":"अल्पकालिक तरलता संकेतक।",
+    "ACTIVE TEAM":"सक्रिय टीम",
+    "CEO, Data and Finance.":"सीईओ, डेटा और वित्त।",
+    "SERVICES":"सेवाएँ",
+    "Decision simulation":"निर्णय सिमुलेशन",
+    "Test business choices before committing cash.":"नकदी लगाने से पहले व्यावसायिक निर्णयों का परीक्षण करें।",
+    "Multi-agent reporting":"मल्टी-एजेंट रिपोर्टिंग",
+    "Combine data and finance submissions for the CEO.":"सीईओ के लिए डेटा और वित्तीय जानकारी को मिलाएँ।",
+    "Financial planning":"वित्तीय योजना",
+    "Explore reserves, SIP projections and business targets.":"रिज़र्व, SIP अनुमान और व्यावसायिक लक्ष्यों को देखें।",
+    "Human support":"मानवीय सहायता",
+    "Browse fictional financial coaches for demo discovery.":"डेमो के लिए काल्पनिक वित्तीय कोच देखें।",
+    "LIVE CASH MOTION":"लाइव नकदी प्रवाह",
+    "FINANCIAL TOOLS":"वित्तीय उपकरण",
+    "AI ASSISTANT":"एआई सहायक",
+    "Ask your finance copilot.":"अपने वित्तीय सहायक से पूछें।"
+  },
+  ta: {
+    "Dashboard":"டாஷ்போர்டு",
+    "Learn Finance":"நிதியைக் கற்க",
+    "Financial Tools":"நிதிக் கருவிகள்",
+    "AI Assistant":"AI உதவியாளர்",
+    "Financial Advisors":"நிதி ஆலோசகர்கள்",
+    "Investment Plan":"முதலீட்டுத் திட்டம்",
+    "Log out":"வெளியேறு",
+    "FINANCIAL DECISION SIMULATOR":"நிதி முடிவு சிமுலேட்டர்",
+    "COMPANY OVERVIEW":"நிறுவன மேலோட்டம்",
+    "Your business cockpit.":"உங்கள் வணிகக் கட்டுப்பாட்டு மையம்.",
+    "CASH POSITION":"கையிருப்பு பண நிலை",
+    "Current reported cash balance.":"தற்போது தெரிவிக்கப்பட்ட கையிருப்பு பணம்.",
+    "RISK":"ஆபத்து",
+    "Short-term liquidity indicator.":"குறுகிய கால பணப்புழக்கக் குறியீடு.",
+    "ACTIVE TEAM":"செயலில் உள்ள குழு",
+    "CEO, Data and Finance.":"CEO, தரவு மற்றும் நிதி.",
+    "SERVICES":"சேவைகள்",
+    "Decision simulation":"முடிவு சிமுலேஷன்",
+    "Test business choices before committing cash.":"பணத்தை பயன்படுத்துவதற்கு முன் வணிக முடிவுகளைச் சோதிக்கவும்.",
+    "Multi-agent reporting":"பல-முகவர் அறிக்கையிடல்",
+    "Combine data and finance submissions for the CEO.":"CEO-க்காக தரவு மற்றும் நிதித் தகவல்களை இணைக்கவும்.",
+    "Financial planning":"நிதித் திட்டமிடல்",
+    "Explore reserves, SIP projections and business targets.":"கையிருப்பு, SIP கணிப்புகள் மற்றும் வணிக இலக்குகளைப் பார்க்கவும்.",
+    "Human support":"மனித ஆதரவு",
+    "Browse fictional financial coaches for demo discovery.":"டெமோவிற்கான கற்பனை நிதி ஆலோசகர்களைப் பார்க்கவும்.",
+    "LIVE CASH MOTION":"நேரடி பண இயக்கம்",
+    "FINANCIAL TOOLS":"நிதிக் கருவிகள்",
+    "AI ASSISTANT":"AI உதவியாளர்",
+    "Ask your finance copilot.":"உங்கள் நிதி உதவியாளரிடம் கேளுங்கள்."
+  },
+  te: {
+    "Dashboard":"డ్యాష్‌బోర్డ్",
+    "Learn Finance":"ఆర్థిక విషయాలు నేర్చుకోండి",
+    "Financial Tools":"ఆర్థిక సాధనాలు",
+    "AI Assistant":"AI సహాయకుడు",
+    "Financial Advisors":"ఆర్థిక సలహాదారులు",
+    "Investment Plan":"పెట్టుబడి ప్రణాళిక",
+    "Log out":"లాగ్ అవుట్",
+    "FINANCIAL DECISION SIMULATOR":"ఆర్థిక నిర్ణయాల సిమ్యులేటర్",
+    "COMPANY OVERVIEW":"కంపెనీ అవలోకనం",
+    "Your business cockpit.":"మీ వ్యాపార నియంత్రణ కేంద్రం.",
+    "CASH POSITION":"నగదు స్థితి",
+    "Current reported cash balance.":"ప్రస్తుతం నివేదించిన నగదు నిల్వ.",
+    "RISK":"ప్రమాదం",
+    "Short-term liquidity indicator.":"స్వల్పకాలిక నగదు లభ్యత సూచిక.",
+    "ACTIVE TEAM":"క్రియాశీల బృందం",
+    "CEO, Data and Finance.":"CEO, డేటా మరియు ఫైనాన్స్.",
+    "SERVICES":"సేవలు",
+    "Decision simulation":"నిర్ణయాల సిమ్యులేషన్",
+    "Test business choices before committing cash.":"నగదును ఉపయోగించే ముందు వ్యాపార నిర్ణయాలను పరీక్షించండి.",
+    "Multi-agent reporting":"మల్టీ-ఏజెంట్ రిపోర్టింగ్",
+    "Combine data and finance submissions for the CEO.":"CEO కోసం డేటా మరియు ఆర్థిక సమాచారాన్ని కలపండి.",
+    "Financial planning":"ఆర్థిక ప్రణాళిక",
+    "Explore reserves, SIP projections and business targets.":"రిజర్వులు, SIP అంచనాలు మరియు వ్యాపార లక్ష్యాలను చూడండి.",
+    "Human support":"మానవ సహాయం",
+    "Browse fictional financial coaches for demo discovery.":"డెమో కోసం కల్పిత ఆర్థిక కోచ్‌లను చూడండి.",
+    "LIVE CASH MOTION":"లైవ్ నగదు కదలిక",
+    "FINANCIAL TOOLS":"ఆర్థిక సాధనాలు",
+    "AI ASSISTANT":"AI సహాయకుడు",
+    "Ask your finance copilot.":"మీ ఆర్థిక సహాయకుడిని అడగండి."
+  }
+};
+
+function applyStaticI18n(){
+  document.querySelectorAll('body *').forEach(el=>{
+    if(['SCRIPT','STYLE','SELECT','OPTION','INPUT','TEXTAREA'].includes(el.tagName)) return;
+    if(el.children.length !== 0) return;
+
+    if(!el.dataset.staticI18nKey){
+      const original = el.textContent.trim();
+      if(original && STATIC_I18N.en[original]){
+        el.dataset.staticI18nKey = original;
+      }
+    }
+
+    const key = el.dataset.staticI18nKey;
+    if(key && STATIC_I18N[currentLang] && STATIC_I18N[currentLang][key]){
+      el.textContent = STATIC_I18N[currentLang][key];
+    }
+  });
+}
+
+function applyI18n(){ document.querySelectorAll('[data-i18n]').forEach(el=>{ el.textContent = t(el.getAttribute('data-i18n')); }); applyStaticI18n(); }
 
 function switchView(v){
   ['sim','adv','inv','dash','learn','tools','ai'].forEach(x=>{const el=document.getElementById('view-'+x);if(el)el.classList.toggle('hidden',v!==x);const nav=document.getElementById('nav-'+x);if(nav)nav.classList.toggle('active',v===x);});
